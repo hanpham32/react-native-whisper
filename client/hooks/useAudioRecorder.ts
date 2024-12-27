@@ -54,7 +54,10 @@ export function useAudioRecorder() {
     return `${minutes}:${secondsDisplay}`;
   }, []);
 
-  // Start recording
+  /**
+   * Starts audio recording after requesting microphone permissions
+   * @throws Error if microphone permission is denied
+   */
   const startRecording = useCallback(async () => {
     try {
       console.log("Requesting permission..");
@@ -68,11 +71,12 @@ export function useAudioRecorder() {
         playsInSilentModeIOS: true,
       });
 
+      // Create a recording and start recording
       const { recording } = await Audio.Recording.createAsync(
         RECORDING_OPTIONS_PRESET_HIGH_QUALITY
       );
 
-      setRecording(recording);
+      setRecording(recording);  // save the instance of Recorder to state
       setIsRecording(true);
       console.log("Recording started...");
     } catch (error) {
@@ -81,14 +85,18 @@ export function useAudioRecorder() {
     }
   }, []);
 
-  // Stop recording
+  /**
+   * Stops the current audio recording, saves it, and adds it to the recordings list
+   * @returns Promise<void>
+   */
   const stopRecording = useCallback(async () => {
     try {
       console.log("Stopping recording...");
       if (!recording) return;
 
-      setIsRecording(false);
+      // stop the recording and deallocate the recording from memory
       await recording.stopAndUnloadAsync();
+      setIsRecording(false);
 
       const uri = recording.getURI();
       const { sound, status } = await recording.createNewLoadedSoundAsync();
@@ -101,7 +109,7 @@ export function useAudioRecorder() {
         };
         setRecordings((prev) => [...prev, newRecording]);
       }
-      setRecording(null);
+      setRecording(recording);
       console.log("Recording stopped. File stored at:", uri);
     } catch (error) {
       console.error("Error stopping recording:", error);

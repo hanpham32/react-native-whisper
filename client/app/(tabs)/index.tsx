@@ -8,6 +8,7 @@ import { TranscribedText } from '@/components/TranscribedOutput';
 import { RecordingList } from '@/components/RecordingList';
 
 export default function App() {
+  // Set up audio recorder
   const {
     recording,
     isRecording,
@@ -16,6 +17,7 @@ export default function App() {
     stopRecording
   } = useAudioRecorder();
 
+  // set up audio transcriber
   const {
     isTranscribing,
     transcribedData,
@@ -23,7 +25,7 @@ export default function App() {
     transcribeRecording
   } = useTranscription();
 
-  const [selectedLanguage, setSelectedLanguage] = useState("english");
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [selectedModel, setSelectedModel] = useState(1);
   const [transcribeTimeout, setTranscribeTimeout] = useState(5);
   const [stopTranscriptionSession, setStopTranscriptionSession] = useState(false);
@@ -32,18 +34,20 @@ export default function App() {
   const modelOptions = ["tiny", "base", "small", "medium", "large"];
 
   const handleTranscribe = async () => {
+    console.log("pressed trascribe button");
+    console.log(recording);
     if (!recording) return;
     setIsLoading(true);
 
     try {
       // The file URI is in `recording.getURI()`
       const fileUri = recording.getURI();
+      console.log("At handleTranscribe:", fileUri);
       if (!fileUri) return;
 
       await transcribeRecording(
         fileUri,
         selectedLanguage,
-        modelOptions[selectedModel]
       );
     } finally {
       setIsLoading(false);
@@ -57,7 +61,7 @@ export default function App() {
       <View style={styles.settingsSection}>
         <Mode
           disabled={isTranscribing || isRecording}
-          possibleLanguages={["english", "vietnamese"]}
+          possibleLanguages={["en", "vi"]}
           selectedLanguage={selectedLanguage}
           onLanguageChange={setSelectedLanguage}
           modelOptions={modelOptions}
@@ -91,7 +95,7 @@ export default function App() {
       )}
 
       {error && <Text style={{ color: 'red' }}>{error}</Text>}
-      <TranscribedText transcribedText='transcribedData' />
+      <TranscribedText transcribedText={transcribedData} />
 
       <RecordingList recordings={recordings} />
     </View>

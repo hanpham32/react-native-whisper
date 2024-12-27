@@ -1,12 +1,10 @@
 // hooks/useTranscription.ts
 import { useState, useCallback } from 'react';
-import axios from 'axios';
 import FormData from 'form-data';
 import { transcribeAudio } from '@/services/openAITranscription';
 
-interface TranscriptionResponse {
+export interface TranscriptionResponse {
   text: string;
-  // shape this to match the actual API response
 }
 
 export function useTranscription() {
@@ -15,24 +13,28 @@ export function useTranscription() {
   const [error, setError] = useState<string | null>(null);
 
   const transcribeRecording = useCallback(
-    async (fileUri: string, language: string, modelSize: string) => {
+    async (fileUri: string, language: string) => {
       try {
+        console.log("At useTranscription hook: transcribing text");
         setIsTranscribing(true);
         setError(null);
 
         const filetype = fileUri.split(".").pop();
         const filename = fileUri.split("/").pop();
+        console.log("filetype: ", filetype);
 
         const formData = new FormData();
         formData.append("language", language);
-        formData.append("model_size", modelSize);
         formData.append("audio_data", {
           uri: fileUri,
           type: `audio/${filetype}`,
           name: filename,
         });
 
-        const response = await transcribeAudio(fileUri, language, modelSize);
+        console.log("sending formData to server");
+        const response = await transcribeAudio(fileUri, language);
+        console.log("received server's response")
+        console.log('response:', response);
 
         setTranscribedData((prev) => [...prev, response]);
       } catch (err) {
