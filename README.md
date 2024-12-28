@@ -26,6 +26,7 @@ Important: Make sure your OpenAI API key is properly set in your environment var
 4. **ngrok**
    - Installable on most platforms; instructions included below.
 5. **OpenAI API Key**
+6. **ngrok API Key**
 
 ### Clone the repository
 
