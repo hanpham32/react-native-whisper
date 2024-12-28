@@ -19,8 +19,8 @@ Important: Make sure your OpenAI API key is properly set in your environment var
 
 1. **uv / Node.js / Yarn / Bun**
    - You can install [uv](https://docs.astral.sh/uv/), [Node.js](https://nodejs.org/) or [Bun](https://bun.sh/) to manage JS dependencies.
-2. **Python 3.9+**
-   - Required for running the Flask server.
+2. **Python 3.13.0+**
+   - Required for dependencies.
 3. **Flask**
    - Installed via `pip` or a virtual environment.
 4. **ngrok**
